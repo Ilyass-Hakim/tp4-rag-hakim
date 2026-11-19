@@ -14,6 +14,7 @@ import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import dev.langchain4j.model.google.genai.GoogleGenAiChatModel;
+import dev.langchain4j.model.input.PromptTemplate;
 import dev.langchain4j.model.output.Response;
 import dev.langchain4j.rag.DefaultRetrievalAugmentor;
 import dev.langchain4j.rag.RetrievalAugmentor;
@@ -65,9 +66,10 @@ public class Test3 {
 
           @Override
           public List<ContentRetriever> route(Query query) {
-            String question = "Est-ce que la requête '" + query.text()
-                              + "' porte sur le 'RAG' (Retrieval Augmented Generation) ou le 'Fine Tuning' ? "
-                              + "Réponds seulement par 'oui', 'non', ou 'peut-être'.";
+            PromptTemplate promptTemplate = PromptTemplate.from(
+                    "Est-ce que la requête '{{it}}' porte sur le 'RAG' (Retrieval Augmented Generation) ou le 'Fine Tuning' ? "
+                    + "Réponds seulement par 'oui', 'non', ou 'peut-être'.");
+            String question = promptTemplate.apply(query.text()).text();
             String reponse = model.chat(question);
             if (reponse.toLowerCase().contains("non")) {
               // Pas de RAG
