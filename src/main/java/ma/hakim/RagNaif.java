@@ -37,7 +37,7 @@ public class RagNaif {
         DocumentParser documentParser = new ApacheTikaDocumentParser();
         Document document = ClassPathDocumentLoader.loadDocument("rag.pdf", documentParser);
 
-        DocumentSplitter splitter = DocumentSplitters.recursive(300, 30);
+        DocumentSplitter splitter = DocumentSplitters.recursive(1000, 100);
         List<TextSegment> segments = splitter.split(document);
 
         EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
@@ -51,7 +51,7 @@ public class RagNaif {
         ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
                 .embeddingStore(embeddingStore)
                 .embeddingModel(embeddingModel)
-                .maxResults(2)
+                .maxResults(5)
                 .minScore(0.5)
                 .build();
 
