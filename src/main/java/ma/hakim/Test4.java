@@ -21,6 +21,7 @@ import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.rag.content.retriever.WebSearchContentRetriever;
 import dev.langchain4j.rag.query.router.DefaultQueryRouter;
+import dev.langchain4j.rag.query.router.LanguageModelQueryRouter;
 import dev.langchain4j.rag.query.router.QueryRouter;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.store.embedding.EmbeddingStore;
@@ -29,7 +30,9 @@ import dev.langchain4j.web.search.WebSearchEngine;
 import dev.langchain4j.web.search.tavily.TavilyWebSearchEngine;
 import ma.hakim.assistant.Assistant;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Test4 {
@@ -72,7 +75,15 @@ public class Test4 {
                 .webSearchEngine(webSearchEngine)
                 .build();
 
-        QueryRouter queryRouter = new DefaultQueryRouter(contentRetriever, webSearchContentRetriever);
+        // QueryRouter queryRouter = new DefaultQueryRouter(contentRetriever, webSearchContentRetriever);
+
+        Map<ContentRetriever, String> descriptions = new HashMap<>();
+        descriptions.put(contentRetriever,
+                "Cours sur l'intelligence artificielle : le fine-tuning et le RAG (Retrieval Augmented Generation) des modèles de langage");
+        descriptions.put(webSearchContentRetriever,
+                "Recherche sur le Web : actualités, événements récents et informations générales qui ne portent pas sur le cours");
+
+        QueryRouter queryRouter = new LanguageModelQueryRouter(model, descriptions);
 
         RetrievalAugmentor retrievalAugmentor = DefaultRetrievalAugmentor.builder()
                 .queryRouter(queryRouter)
